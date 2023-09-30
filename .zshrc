@@ -2,6 +2,9 @@
 
 PROMPT=$'%F{yellow}%~%f\n %# '
 
+# Import nice modules
+export PATH="$PATH:/usr/bin"
+
 # The following lines were added by compinstall
 
 zstyle ':completion:*' auto-description 'specify: %d'
@@ -81,6 +84,7 @@ alias .....='cd ../../../..'
 
 # File handling
 alias rmf='rm -f'  # Remove a file forcefully
+alias rmr='rm -r'  # Remove directories recursively
 alias cpr='cp -r'  # Copy directories recursively
 alias mvr='mv -r'  # Move directories recursively
 
@@ -107,6 +111,7 @@ alias gbr='git branch'
 alias gpl='git pull'
 alias gr='git rebase'
 alias gbl='git branch --list'
+alias gstart='gco master && gpl && gco -b '
 
 # Show Help Function
 show_help() {
@@ -118,6 +123,7 @@ show_help() {
   echo ""
   echo "File Handling:"
   echo "  rmf                     : Forcefully remove a file."
+  echo "  rmr                     : Remove directories recursively."
   echo "  cpr                     : Copy directories recursively."
   echo "  mvr                     : Move directories recursively."
   echo ""
@@ -132,18 +138,19 @@ show_help() {
   echo "  l                       : List files in columns."
   echo ""
   echo "Git Commands:"
-  echo "  gs                      : Git status."
-  echo "  ga                      : Git add."
-  echo "  gc                      : Git commit."
-  echo "  gp                      : Git push."
-  echo "  gl                      : Git log."
-  echo "  gd                      : Git diff."
-  echo "  gcl                     : Git clone."
-  echo "  gco                     : Git checkout."
-  echo "  gbr                     : Git branch."
-  echo "  gpl                     : Git pull."
-  echo "  gr                      : Git rebase."
-  echo "  gbl                     : Git branch --list."
+  echo "  gs                      : git status"
+  echo "  ga                      : git add"
+  echo "  gc                      : git commit"
+  echo "  gp                      : git push"
+  echo "  gl                      : git log"
+  echo "  gd                      : git diff"
+  echo "  gcl                     : git clone"
+  echo "  gco                     : git checkout"
+  echo "  gbr                     : git branch"
+  echo "  gpl                     : git pull"
+  echo "  gr                      : git rebase"
+  echo "  gbl                     : git branch --list"
+  echo "  gstart                  : gco master && gpl && gco -b"
 }
 
 # Register help function
@@ -180,11 +187,31 @@ tgit() {
 
 # Function to reload the Zsh configuration
 reloadZSH() {
-  source "C:/Users/11899/.zshrc"
+  source $HOME/.zshrc
   echo "Zsh configuration reloaded."
 }
+
 # Function to open the Zsh configuration in VSCode
 editZSH() {
-  code "C:/Users/11899/.zshrc"
+  code $HOME/.zshrc
   echo "Opening Zsh configuration in VSCode."
+}
+
+alias wsl="/c/Windows/System32/wsl.exe"
+
+winCD() {
+    local win_path=$1
+    local unix_path
+
+    # Replace backslashes with forward slashes and "C:" with "/c"
+    unix_path="${win_path//\\//}"
+    unix_path="${unix_path/:/}"
+
+    # Convert drive letter to lowercase and prepend a slash
+    local drive_letter=${unix_path:0:1}
+    drive_letter=$(echo "$drive_letter" | /usr/bin/tr '[:upper:]' '[:lower:]')
+    unix_path="/$drive_letter${unix_path:1}"
+
+    # echo "$unix_path"
+    cd "$unix_path"
 }
