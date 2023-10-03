@@ -1,6 +1,27 @@
-# The look
+# Enable command substitution in the prompt
+setopt PROMPT_SUBST
 
-PROMPT=$'%F{yellow}%~%f\n %# '
+# Function to get git info
+parse_git_branch() {
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'
+}
+
+# Variable to hold git info
+git_info=""
+
+# precmd function to update the prompt
+precmd() {
+  git_info=$(parse_git_branch)
+  if [[ -n $git_info ]]; then
+    git_info=" %F{yellow}($git_info)%f"
+  else
+    git_info=""
+  fi
+}
+
+# The look
+PROMPT="%F{red}%~%f\${git_info}
+%# "
 
 # Import nice modules
 export PATH="$PATH:/usr/bin"
