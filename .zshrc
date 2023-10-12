@@ -1,3 +1,5 @@
+# NO LONGER USED
+
 # Enable command substitution in the prompt
 setopt PROMPT_SUBST
 
