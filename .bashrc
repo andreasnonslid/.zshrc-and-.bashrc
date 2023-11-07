@@ -1,3 +1,5 @@
+export HISTSIZE=10000
+
 # Foreground Colors
 BLACK="\033[0;30m"
 RED="\033[0;31m"
@@ -74,8 +76,10 @@ update_git_info() {
     branch=$(parse_git_branch)
     if [[ -n $branch ]]; then
         git_info=" ($branch)"
+        curBranch=$branch  
     else
         git_info=""
+        curBranch=""  
     fi
 }
 
@@ -115,20 +119,6 @@ mkcd() {
     mkdir -p -- "$1" && cd -P -- "$1"
 }
 
-alias cls='clear'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
-alias rmf='rm -f'
-alias rmr='rm -r'
-alias cpr='cp -r'
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
-alias ll='ls -l'
-alias la='ls -a'
-alias l='ls -CF'
 alias gs='git status'
 alias ga='git add'
 alias gc='git commit'
@@ -144,7 +134,37 @@ alias gbl='git branch --list'
 alias gstart='gco master && gpl && gco -b'
 alias gnevermind='git reset --hard HEAD && git clean -d -f'
 
-show_help() {
+gpForce() {
+    local branch=$1
+    gp origin ${branch} --force-with-lease
+}
+
+gpForceCurrentBranch() {
+    gp origin ${curBranch} --force-with-lease
+}
+
+gresetToOrigin() {
+    git reset --hard origin/${curBranch}
+}
+
+grename() {
+    local newBranch=$1
+    git branch -m ${newBranch}
+}
+
+grenameOnOrigin() {
+    local newBranch=$1
+    git push origin --delete ${curBranch}
+    git push origin ${newBranch}
+    git push origin -u ${newBranch}
+}
+
+gdeleteOnOrigin() {
+    local branch=$1
+    git push origin --delete ${branch}
+}
+
+showHelp() {
     echo -e "Extensive List of Useful Functions:\n"
     # (rest of the function is unchanged)
     echo "Navigation:"
@@ -182,9 +202,25 @@ show_help() {
     echo "  gbl                     : git branch --list"
     echo "  gstart                  : gco master && gpl && gco -b"
     echo "  gnevermind              : git reset --hard HEAD && git clean -d -f"
+    echo "  gpforce                 : gp origin \$1 --force-with-lease"
 }
 
-alias bashhelp='show_help'
+alias bashHelp='showHelp'
+alias wsl="/c/Windows/System32/wsl.exe"
+alias cls='clear'
+alias rmf='rm -f'
+alias rmr='rm -r'
+alias cpr='cp -r'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias ll='ls -l'
+alias la='ls -a'
+alias l='ls -CF'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
 alias cdc='cd c:/'
 alias cdASMonoRepo='cd c:/dev/ASMonoRepo'
 alias cdFusion='cd c:/dev/ASMonoRepo/products/port/buddy-port'
@@ -222,8 +258,6 @@ editBASH() {
     code $HOME/.bashrc
     echo "Opening Bash configuration in VSCode."
 }
-
-alias wsl="/c/Windows/System32/wsl.exe"
 
 winCD() {
     local win_path=$1
